@@ -1,6 +1,5 @@
 import "./styles/index.css";
 
-const app = document.querySelector<HTMLDivElement>("#app")!;
 interface GroceryItem {
   id: string;
   name: string;
@@ -12,7 +11,18 @@ interface CartItem {
   name: string;
   amount: number;
 }
-const state = {
+const state: {
+  groceries: {
+    id: string;
+    name: string;
+    price: number;
+  }[];
+  cart: {
+    id: string;
+    name: string;
+    amount: number;
+  }[];
+} = {
   groceries: [
     {
       id: "001-beetroot",
@@ -102,7 +112,7 @@ function createGroceriItem(item: GroceryItem) {
   return listitemEl;
 }
 
-function addItemToCart(clickedItem: object) {
+function addItemToCart(clickedItem: GroceryItem) {
   let itemIsInCart = false;
   for (const item of state.cart) {
     if (item.id === clickedItem.id) {
@@ -114,7 +124,6 @@ function addItemToCart(clickedItem: object) {
   if (!itemIsInCart) {
     const cartItem = {
       id: clickedItem.id,
-      icon: clickedItem.icon,
       name: clickedItem.name,
       amount: 1,
     };
@@ -129,7 +138,7 @@ function cartItem(item: CartItem) {
   const cartImg = document.createElement("img");
   cartImg.setAttribute("class", "cart--item-icon");
   cartImg.setAttribute("alt", item.name);
-  cartImg.src = `assets/icons/${item.id}.svg" alt="${item.name}`;
+  cartImg.src = `assets/icons/${item.id}.svg`;
 
   //p
   const titleEl = document.createElement("p");
@@ -146,7 +155,7 @@ function cartItem(item: CartItem) {
   const spanEl = document.createElement("span");
   spanEl.setAttribute("class", "quantity-text");
   spanEl.classList.add("center");
-  spanEl.innerText = item.amount;
+  spanEl.innerText = item.amount.toString();
 
   //quantity btn right
   const quantityBtnRight = document.createElement("button");
@@ -156,7 +165,7 @@ function cartItem(item: CartItem) {
   quantityBtnRight.innerText = "+";
 
   quantityBtnRight.addEventListener("click", function () {
-    spanEl.innerText = item.amount += 1;
+    spanEl.innerText = String((item.amount += 1));
     renderCartItems();
   });
 
@@ -169,7 +178,7 @@ function cartItem(item: CartItem) {
       state.cart.splice(indexOfItem, 1);
       renderCartItems();
     } else {
-      spanEl.innerText = item.amount -= 1;
+      spanEl.innerText = String((item.amount -= 1));
     }
   });
 
@@ -186,19 +195,21 @@ function cartItem(item: CartItem) {
 
 function calculateTotal() {
   const totalEl = document.querySelector(".total-number");
+  if (totalEl === null) return;
+
   let total = 0;
   for (const itemFromCArt of state.cart) {
     const foundItem = state.groceries.find(function (itemFromStore) {
       return itemFromCArt.id === itemFromStore.id;
     });
     total += foundItem.price * itemFromCArt.amount;
-    console.log(total);
   }
 
   totalEl.innerText = `£${total.toFixed(2)}`;
 }
 
 function renderCartItems() {
+  if (cartListEl === null) return;
   cartListEl.innerHTML = "";
   for (const item of state.cart) {
     const cartItemEl = cartItem(item);
@@ -209,8 +220,3 @@ function renderCartItems() {
 
 renderGroceries(state);
 renderCartItems(state);
-
-// app.innerHTML = `
-//   <h1>Hello Vite!</h1>
-//   <a href="https://vitejs.dev/guide/features.html" target="_blank">Documentation</a>
-// `;
