@@ -1,27 +1,19 @@
 import "./styles/index.css";
 
-interface GroceryItem {
+type GroceryItem = {
   id: string;
   name: string;
   price: number;
-}
+};
 
-interface CartItem {
+type CartItem = {
   id: string;
   name: string;
   amount: number;
-}
+};
 const state: {
-  groceries: {
-    id: string;
-    name: string;
-    price: number;
-  }[];
-  cart: {
-    id: string;
-    name: string;
-    amount: number;
-  }[];
+  groceries: GroceryItem[];
+  cart: CartItem[];
 } = {
   groceries: [
     {
@@ -205,7 +197,7 @@ function calculateTotal() {
     total += foundItem.price * itemFromCArt.amount;
   }
 
-  totalEl.innerText = `£${total.toFixed(2)}`;
+  totalEl.textContent = `£${total.toFixed(2)}`;
 }
 
 function renderCartItems() {
@@ -218,5 +210,5 @@ function renderCartItems() {
   calculateTotal();
 }
 
-renderGroceries(state);
-renderCartItems(state);
+renderGroceries();
+renderCartItems();
